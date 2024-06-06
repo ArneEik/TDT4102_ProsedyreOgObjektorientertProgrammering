@@ -19,6 +19,8 @@ private:
     double theta_goal = 30.0;
     double current_theta = 800;
     double velocity = 80;
+    double thetaIncrement = 0.1;
+    double velocityIncrement = 0.1;
 
     std::vector<TDT4102::Point>missedShots{};
 
@@ -40,12 +42,14 @@ private:
     TDT4102::Point updateBtnPoint = {static_cast<int>(w_width - btnWidth*2), static_cast<int>(btnHeight + 5)};
     TDT4102::Point velocityInputPoint = {static_cast<int>(w_width - btnWidth*2), static_cast<int>(btnHeight*0)};
     TDT4102::Point thetaInputPoint = {static_cast<int>(w_width - btnWidth), static_cast<int>(btnHeight*0)};
+    TDT4102::Point resetBtnPoint = {static_cast<int>(w_width - btnWidth*2), static_cast<int>(btnHeight + 5)*3};
 
 
     TDT4102::TextInput thetaDisplay;
     TDT4102::TextInput velocityDisplay;
     TDT4102::Button shootBtn;
     TDT4102::Button updateBtn;
+    TDT4102::Button resetBtn;
 
     //Seiers greier
     std::string victoryText{"U WON!!!"};
@@ -83,6 +87,10 @@ private:
     inline void updateParams();
     double getDistanceTraveled();
     void checkForWin();
+    void restart();
+
+    void handleInput();
+    void updateDisplay();
 
 public:
     CannonballWindow();

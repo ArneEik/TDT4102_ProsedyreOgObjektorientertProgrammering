@@ -10,7 +10,8 @@ CannonballWindow::CannonballWindow()
       shootBtn{shootBtnPoint,btnWidth,btnHeight,"shoot!"},
       updateBtn{updateBtnPoint,btnWidth,btnHeight,"Update"},
       thetaDisplay{thetaInputPoint,btnWidth,btnHeight,"30"},
-      velocityDisplay{velocityInputPoint,btnWidth,btnHeight,"80"}
+      velocityDisplay{velocityInputPoint,btnWidth,btnHeight,"80"},
+      resetBtn{resetBtnPoint,btnWidth*2,btnHeight,"Reset"}
 {
     std::cout<<targetPosition<<endl;
     // Initialiseringskode her
@@ -18,11 +19,15 @@ CannonballWindow::CannonballWindow()
     add(updateBtn);
     add(thetaDisplay);
     add(velocityDisplay);
+    add(resetBtn),
 
     shootBtn.setCallback(std::bind(&CannonballWindow::shoot, this));
     updateBtn.setCallback(std::bind(&CannonballWindow::updateParams,this));
+    resetBtn.setCallback(std::bind(&CannonballWindow::restart, this));
     thetaDisplay.setText(to_string_with_precision(theta_goal));
     velocityDisplay.setText(to_string_with_precision(velocity));
+
+    resetBtn.setVisible(false);
 
     boatTargetPoint.x =static_cast<int>(targetPosition);
     run();
@@ -31,17 +36,21 @@ CannonballWindow::CannonballWindow()
 void CannonballWindow::run() {
     int iterator{0};
     while(!should_close()) {
+        handleInput();
         while (abs(current_theta-theta_goal) >= tol)
         {
             changeTheta();
             drawWindow();
+            handleInput();
             next_frame();
+
         }
         if(isShooting){
             for (int i = 0; i <= timeSteps; ++i){
                 changeTheta();
                 drawWindow();
                 updateShooting(i);
+                handleInput();
                 next_frame();
             }
             missedShots.push_back(cannonballPos);
@@ -65,7 +74,6 @@ void CannonballWindow::shoot()
 {
     updateParams();
     isShooting = true;
-
 }
 
 void CannonballWindow::updateShooting(int i)
@@ -94,8 +102,9 @@ void CannonballWindow::changeTheta() {
 
 void CannonballWindow::updateParams()
 {
-    theta_goal = static_cast<double>(stoi(thetaDisplay.getText()));
-    velocity = static_cast<double>(stoi(velocityDisplay.getText()));
+    updateDisplay();
+    theta_goal = stod(thetaDisplay.getText());
+    velocity = stod(velocityDisplay.getText());
     velX = velocity*cos(degToRad(theta_goal));
     velY = velocity*sin(degToRad(theta_goal));
 }
@@ -302,8 +311,9 @@ double CannonballWindow::getDistanceTraveled(){
 void CannonballWindow::checkForWin()
 {
     if(!haveCheckedForWin){    
-    gameIsWon = abs(getDistanceTraveled() - targetPosition) <= 8;
-    haveCheckedForWin = true;
+        gameIsWon = abs(getDistanceTraveled() - targetPosition) <= 8;
+        haveCheckedForWin = true;
+        gameIsWon == true ? resetBtn.setVisible(true) : resetBtn.setVisible(false);
     }
 }
 
@@ -313,3 +323,92 @@ std::string CannonballWindow::to_string_with_precision(double value, int precisi
     out << std::fixed << std::setprecision(precision) << value;
     return out.str();
 }
+
+void CannonballWindow::restart()
+{
+    missedShots.clear();
+    gameIsWon = false;
+    haveCheckedForWin = false;
+    textColor = TDT4102::Color::white;
+    resetBtn.setVisible(false);
+    targetPosition = Utilities::randomWithLimits(static_cast<double>(w_width)/2, static_cast<double>(w_width));
+    boatTargetPoint.x = targetPosition;
+    // theta_goal += 3630;
+}
+
+void CannonballWindow::handleInput() {
+    static bool lastUpKeyState = false;
+    static bool lastDownKeyState = false;
+    static bool lastLeftKeyState = false;
+    static bool lastRightKeyState = false;
+    static bool lastShiftKeyState = false;
+    static bool lastSpaceKeyState = false;
+    
+    bool currentUpKeyState = is_key_down(KeyboardKey::UP);
+    bool currentDownKeyState = is_key_down(KeyboardKey::DOWN);
+    bool currentLeftKeyState = is_key_down(KeyboardKey::LEFT);
+    bool currentRightKeyState = is_key_down(KeyboardKey::RIGHT);
+    bool currentShiftKeyState = is_key_down(KeyboardKey::LEFT_SHIFT);
+    bool currentSpaceKeyState = is_key_down(KeyboardKey::SPACE);
+
+    if(currentSpaceKeyState && !lastSpaceKeyState){
+        shoot();
+    }
+
+    if(currentUpKeyState) {
+        std::cout<<"up\n";
+        if(currentShiftKeyState && !lastUpKeyState) {
+            theta_goal += thetaIncrement*10;
+        } else if (!currentShiftKeyState){
+            theta_goal += thetaIncrement;
+            updateParams();
+        }
+    }
+
+    if(currentDownKeyState) {
+        if(currentShiftKeyState && !lastDownKeyState) {
+            theta_goal -= thetaIncrement*10;
+        } else if (!currentShiftKeyState) {
+            theta_goal -= thetaIncrement;
+            updateParams();
+        }
+    }
+
+    if(currentRightKeyState) {
+        if(currentShiftKeyState && !lastRightKeyState) {
+            velocity += velocityIncrement*10;
+        } else if(!currentShiftKeyState) {
+            velocity += velocityIncrement;
+            updateParams();
+        }
+    }
+
+    if(currentLeftKeyState) {
+        if(currentShiftKeyState && !lastLeftKeyState) {
+            velocity -= velocityIncrement*10;
+        } else if(!currentShiftKeyState) {
+            velocity -= velocityIncrement;
+            updateParams();
+        }
+    }
+
+    lastUpKeyState = currentUpKeyState;
+    lastDownKeyState = currentDownKeyState;
+    lastLeftKeyState = currentLeftKeyState;
+    lastRightKeyState = currentRightKeyState;
+    lastShiftKeyState = currentShiftKeyState;
+    lastSpaceKeyState = currentSpaceKeyState;
+
+    // Oppdater skjermen etter endringer
+    updateParams();
+}
+
+void CannonballWindow::updateDisplay() {
+    // Oppdater thetaDisplay og velocityDisplay basert på nye verdier
+    thetaDisplay.setText(to_string_with_precision(theta_goal));
+    velocityDisplay.setText(to_string_with_precision(velocity));
+    draw_text({30,30},"Velocity : " + to_string_with_precision(velocity) + "        " +
+                        "Angle : " + to_string_with_precision(current_theta), 
+                        TDT4102::Color::red);
+}
+
