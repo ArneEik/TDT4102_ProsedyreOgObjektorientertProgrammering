@@ -13,7 +13,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "cStandard": "c20",
+            "cStandard": "c17",
             "cppStandard": "c++20",
             "compilerPath": "C:\\TDT4102-mingw64\\bin\\clang",
             "compileCommands": "${workspaceFolder}/builddir/compile_commands.json",
@@ -30,7 +30,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "cStandard": "c20",
+            "cStandard": "c17",
             "cppStandard": "c++20",
             "compileCommands": "builddir/compile_commands.json",
             "intelliSenseMode": "macos-clang-x64"
@@ -45,11 +45,10 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "cStandard": "c20",
+            "cStandard": "c17",
             "cppStandard": "c++20",
             "compileCommands": "builddir/compile_commands.json",
-            "intelliSenseMode": "linux-clang-x64",
-            "compilerPath": "/usr/bin/g++"
+            "intelliSenseMode": "linux-clang-x64"
         }
     ],
     "version": 4
