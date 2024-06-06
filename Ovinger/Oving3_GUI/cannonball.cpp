@@ -13,23 +13,6 @@ double Cannonball::velY(double initVelocityY, double time){
     return initVelocityY + acclY()*time;
 }
 
-
-//2.d)
-std::string Cannonball::printTime(double timeInSeconds) {
-    int hours = int(timeInSeconds) / 3600;
-    int minutes = (int(timeInSeconds) % 3600) / 60;
-    int seconds = int(timeInSeconds) % 60;
-    int milliseconds = int((timeInSeconds - int(timeInSeconds)) * 1000);
-
-    std::ostringstream out;
-    out << "total airtime: "
-        << std::setfill('0') << std::setw(2) << hours << ":"
-        << std::setfill('0') << std::setw(2) << minutes << ":"
-        << std::setfill('0') << std::setw(2) << seconds << "."
-        << std::setfill('0') << std::setw(3) << milliseconds;
-
-    return out.str();
-}
 //2.e)
 double Cannonball::flightTime(double initVelocityY, double y0) {
     double discriminant = initVelocityY * initVelocityY - 2 * acclY() * y0;
@@ -37,6 +20,7 @@ double Cannonball::flightTime(double initVelocityY, double y0) {
         return nan(""); // Returner NaN hvis diskriminanten er negativ
     }
     double flightTime = (initVelocityY + sqrt(discriminant)) / acclY();
+    std::cout<<flightTime<<std::endl;
     return abs(flightTime);
 }
 

@@ -21,7 +21,6 @@ public:
     double posX(double initPosistionX, double initVelocityX,double time);
     double posY(double initPosistionY, double initVelocityY,double time);
     double flightTime(double initVelocityY, double y0);
-    std::string printTime(double timeInSeconds);
     //4)
     double degToRad(double deg);
     double getVelocityX(double theta, double initVelocity);

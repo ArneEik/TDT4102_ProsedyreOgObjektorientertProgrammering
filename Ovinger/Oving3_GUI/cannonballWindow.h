@@ -25,7 +25,10 @@ private:
     std::vector<TDT4102::Point>missedShots{};
 
     //skytegreier
-    double time = 0;
+    double totalTime = 0.0;
+    int totalFrames = 0;
+    int fps = 5;
+    double frameTime = 1.0 / fps; // Tid per frame i sekunder
     bool isShooting = false;
     double velX = velocity*cos(degToRad(theta_goal));
     double velY = velocity*sin(degToRad(theta_goal));
@@ -80,7 +83,7 @@ private:
     void drawWin(int i);
     
     void shoot();
-    void updateShooting(int i);
+    void updateShooting(double timeRatio);
     void resetShooting();
 
     void changeTheta();

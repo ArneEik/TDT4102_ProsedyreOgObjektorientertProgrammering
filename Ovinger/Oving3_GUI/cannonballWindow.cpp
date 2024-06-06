@@ -46,13 +46,17 @@ void CannonballWindow::run() {
 
         }
         if(isShooting){
-            for (int i = 0; i <= timeSteps; ++i){
+            totalTime = flightTime(velY, (w_height - barrelEnd.y));
+            totalFrames = static_cast<int>(totalTime * fps); // Totalt antall frames for flygetiden
+            for (int frame = 0; frame <= totalFrames; ++frame) {
+                double currentTime = frame * frameTime;
                 changeTheta();
                 drawWindow();
-                updateShooting(i);
+                updateShooting(currentTime / totalTime); // Passerer relativ tid som parameter
                 handleInput();
                 next_frame();
             }
+            cannonballPos.y = w_height;
             missedShots.push_back(cannonballPos);
             resetShooting();
         }
@@ -61,6 +65,10 @@ void CannonballWindow::run() {
         {
             drawWin(iterator);
             ++iterator;
+            if(iterator > 400) {
+                iterator = 0;
+                restart();
+            }
             drawWindow();
             next_frame();
         }
@@ -76,14 +84,12 @@ void CannonballWindow::shoot()
     isShooting = true;
 }
 
-void CannonballWindow::updateShooting(int i)
+void CannonballWindow::updateShooting(double timeRatio)
 {
     cannonballColor = TDT4102::Color::red;
-    time = flightTime(velY,(w_height - barrelEnd.y)) * i / timeSteps;
-    CannonballposY = posY(barrelEnd.y, velY, time);
-    CannonballposX = posX(barrelEnd.x, velX, time);
-    cannonballPos = {static_cast<int>(CannonballposX), static_cast<int>(CannonballposY)};        
-                
+    CannonballposY = posY(barrelEnd.y, velY, totalTime*timeRatio);
+    CannonballposX = posX(barrelEnd.x, velX, totalTime*timeRatio);
+    cannonballPos = {static_cast<int>(CannonballposX), static_cast<int>(CannonballposY)};
 }
 
 void CannonballWindow::resetShooting()
@@ -357,7 +363,7 @@ void CannonballWindow::handleInput() {
 
     if(currentUpKeyState) {
         std::cout<<"up\n";
-        if(currentShiftKeyState && !lastUpKeyState) {
+        if(currentShiftKeyState){// && !lastUpKeyState) {
             theta_goal += thetaIncrement*10;
         } else if (!currentShiftKeyState){
             theta_goal += thetaIncrement;
@@ -366,7 +372,7 @@ void CannonballWindow::handleInput() {
     }
 
     if(currentDownKeyState) {
-        if(currentShiftKeyState && !lastDownKeyState) {
+        if(currentShiftKeyState){// && !lastDownKeyState) {
             theta_goal -= thetaIncrement*10;
         } else if (!currentShiftKeyState) {
             theta_goal -= thetaIncrement;
@@ -375,7 +381,7 @@ void CannonballWindow::handleInput() {
     }
 
     if(currentRightKeyState) {
-        if(currentShiftKeyState && !lastRightKeyState) {
+        if(currentShiftKeyState){// && !lastRightKeyState) {
             velocity += velocityIncrement*10;
         } else if(!currentShiftKeyState) {
             velocity += velocityIncrement;
@@ -384,7 +390,7 @@ void CannonballWindow::handleInput() {
     }
 
     if(currentLeftKeyState) {
-        if(currentShiftKeyState && !lastLeftKeyState) {
+        if(currentShiftKeyState){// && !lastLeftKeyState) {
             velocity -= velocityIncrement*10;
         } else if(!currentShiftKeyState) {
             velocity -= velocityIncrement;
