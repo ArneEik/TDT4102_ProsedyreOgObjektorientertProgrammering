@@ -26,4 +26,4 @@ Dette er ei simulering av eit kanonskot. Du kan justere vinkelen og farta på ka
 4. Hold inne venstre shift for å justere inkrementa raskare.
 5. Trykk på space for å skyte kanonkula og observer banen.
 
-Lukke til med skytinga!
+Lukke til med skytinga! - Chat-GPT
