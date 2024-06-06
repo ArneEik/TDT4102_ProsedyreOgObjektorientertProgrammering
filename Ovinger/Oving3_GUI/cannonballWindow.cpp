@@ -26,6 +26,12 @@ CannonballWindow::CannonballWindow()
     resetBtn.setCallback(std::bind(&CannonballWindow::restart, this));
     thetaDisplay.setText(to_string_with_precision(theta_goal));
     velocityDisplay.setText(to_string_with_precision(velocity));
+    
+    //Bruker tastatur i stede, men gidd ikkje fjerne alt så skyve det under teppe
+    shootBtn.setVisible(false);
+    updateBtn.setVisible(false);
+    thetaDisplay.setVisible(false);
+    velocityDisplay.setVisible(false);
 
     resetBtn.setVisible(false);
 
