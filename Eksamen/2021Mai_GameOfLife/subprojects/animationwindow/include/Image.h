@@ -13,6 +13,7 @@ namespace TDT4102 {
     public:
         explicit Image();
         explicit Image(std::filesystem::path pathToImageFile);
+        ~Image();
 
         int width = 0;
         int height = 0;
